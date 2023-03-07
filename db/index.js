@@ -1,19 +1,30 @@
-// ℹ️ package responsible to make the connection with mongodb
-// https://www.npmjs.com/package/mongoose
-const mongoose = require("mongoose");
+// ℹ️ package responsible to make the connection with postgreSQL
+// https://node-postgres.com/
 
-// ℹ️ Sets the MongoDB URI for our app to have access to it.
-// If no env has been set, we dynamically set it to whatever the folder name was upon the creation of the app
+const getDataDB = async () => {
 
-const MONGO_URI =
-  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Energon-SERVER";
+  const { Client } = require("pg");
+  // Data Base Credentials
+  const client = new Client({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT,
 
-mongoose
-  .connect(MONGO_URI)
-  .then((x) => {
-    const dbName = x.connections[0].name;
-    console.log(`Connected to Mongo! Database name: "${dbName}"`);
-  })
-  .catch((err) => {
-    console.error("Error connecting to mongo: ", err);
   });
+  
+  await client.connect();
+
+  const res = await client.query(
+    'SELECT * FROM "public"."charge_point_reading" LIMIT 1000'
+  );
+debugger;
+  const result = res.rows;  
+
+  await client.end();
+
+  return result;
+};
+
+getDataDB().then((result)=> {console.log(result)});
