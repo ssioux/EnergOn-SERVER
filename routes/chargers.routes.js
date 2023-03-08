@@ -6,17 +6,24 @@ const pool = require('../db/index')
 // GET "/chargers" => List of Chargers from DB
 router.get("/", async (req, res, next) => {
 
-  const response = await pool.query('SELECT NOW()')
-  console.log(response)
+  const allChargers = await pool.query('SELECT * FROM "public"."charge_point" LIMIT 1000')
+  console.log(allChargers.rows)
 
-  res.json(response.rows[0].now);
+  res.send("all chargers")
+
+  // res.json(response.rows[0].now);
 
 });
 
 // GET "/chargers/:chargerId/details" => Charger details by Id from DB
-router.get("/:chargerId/details", (req, res, next) => {
-    const {chargerId} = req.params
-    res.json(`Details of this Id:${chargerId} Charger!`);
+router.get("/details", async (req, res, next) => {
+    // const {chargerId} = req.params
+    // res.json(`Details of this Id:${chargerId} Charger!`);
+    const chargerById = await pool.query('SELECT * FROM "public"."charge_point_reading" LIMIT 1000')
+    console.log(chargerById.rows)
+  
+    res.send("charge point details by Id")
+  
   });
 
 
